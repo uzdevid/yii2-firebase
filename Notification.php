@@ -7,7 +7,7 @@ use yii\base\Component;
 class Notification extends Component {
     const endpoint = 'https://fcm.googleapis.com/fcm/send';
 
-    public function send($token, $params) {
+    public function send($token, $params, $authkey) {
         $body = [
             'to' => $token,
             'notification' => [
@@ -20,7 +20,7 @@ class Notification extends Component {
 
         $headers = [
             'Content-Type: application/json',
-            'Authorization: key='
+            'Authorization: key='.$authkey
         ];
 
         $curl = curl_init();
@@ -28,7 +28,7 @@ class Notification extends Component {
         curl_setopt($curl, CURLOPT_POST, true);
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $body);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($body));
         $result = curl_exec($curl);
         curl_close($curl);
         return $result;
